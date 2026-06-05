@@ -1,0 +1,77 @@
+name: "\U0001F9EA Test Email"
+
+# Только ручной запуск — не тратит минуты Actions
+on:
+  workflow_dispatch:
+
+jobs:
+  test-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create test attachment
+        run: |
+          {
+            echo "Это тестовый файл-вложение."
+            echo "Если ты видишь его в письме — прикрепление файлов работает!"
+            echo "При реальном срабатывании здесь будет приватный SSH-ключ."
+          } > /tmp/test_key.txt
+          echo "Тестовый файл создан."
+
+      - name: Send test email
+        env:
+          EMAIL_FROM:     ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO:       ${{ secrets.EMAIL_TO }}
+        run: |
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          SUBJECT="Тест email | Oracle Ampere Catcher | $(date -u '+%H:%M UTC')"
+
+          {
+            printf "ТЕСТ EMAIL-УВЕДОМЛЕНИЙ — ВСЁ РАБОТАЕТ!\n"
+            printf "══════════════════════════════════════════════\n\n"
+            printf "Если ты получил это письмо с вложением —\n"
+            printf "email-уведомления настроены правильно!\n\n"
+            printf "ДЕТАЛИ ЗАПУСКА\n"
+            printf "══════════════════════════════════════════════\n\n"
+            printf "  Время     : %s\n"  "$TIMESTAMP"
+            printf "  Репо      : %s\n"  "${{ github.repository }}"
+            printf "  Запустил  : %s\n"  "${{ github.actor }}"
+            printf "  Run ID    : %s\n"  "${{ github.run_id }}"
+            printf "\n"
+            printf "Следующий шаг: запусти Oracle Ampere Catcher\n"
+            printf "и жди письмо с SSH-ключами при удаче.\n\n"
+            printf "══════════════════════════════════════════════\n"
+            printf "Oracle Ampere Catcher | GitHub Actions\n"
+          } | python3 send_email.py --subject "$SUBJECT" --attach /tmp/test_key.txt
+
+      - name: Success summary
+        if: success()
+        run: |
+          echo "════════════════════════════════════════"
+          echo "  Тест пройден! Письмо отправлено."
+          echo "  Проверь папку Входящие (и Спам)."
+          echo "════════════════════════════════════════"
+
+      - name: Failure hint
+        if: failure()
+        run: |
+          echo "════════════════════════════════════════"
+          echo "  Письмо не отправлено. Чек-лист:"
+          echo ""
+          echo "  [ ] EMAIL_FROM заполнен?"
+          echo "  [ ] EMAIL_PASSWORD — App Password (не обычный)?"
+          echo "  [ ] EMAIL_TO заполнен?"
+          echo "  [ ] 2FA включена на Google-аккаунте?"
+          echo ""
+          echo "  App Password: https://myaccount.google.com/apppasswords"
+          echo "════════════════════════════════════════"
