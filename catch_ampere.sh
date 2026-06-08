@@ -74,7 +74,7 @@ RESPONSE=$(timeout 90 oci compute instance launch \
     --compartment-id       "$OCI_COMPARTMENT_ID" \
     --availability-domain  "$OCI_AVAILABILITY_DOMAIN" \
     --shape                "VM.Standard.A1.Flex" \
-    --shape-config         '{"ocpus":4,"memoryInGBs":24}' \
+    --shape-config         '{"ocpus":1,"memoryInGBs":6}' \
     --subnet-id            "$OCI_SUBNET_ID" \
     --image-id             "$OCI_IMAGE_ID" \
     --ssh-authorized-keys-file "${KEY_PATH}.pub" \
