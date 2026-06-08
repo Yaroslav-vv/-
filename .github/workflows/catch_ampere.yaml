@@ -2,7 +2,7 @@ name: Oracle Ampere Catcher
 
 on:
   schedule:
-    - cron: '*/15 * * * *'   # Каждые 15 минут
+    - cron: '*/5 * * * *'   # Каждые 15 минут
   workflow_dispatch:           # Ручной запуск
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install OCI CLI
-        run: pip install --quiet --no-progress-bar oci-cli
+        run: pip install --quiet oci-cli
 
       # Записываем конфиг через echo-группу.
       # НЕ используем heredoc — он добавляет ведущие пробелы → OCI CLI падает.
