@@ -2,7 +2,7 @@ name: Oracle Ampere Catcher
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # Каждые 15 минут
+    - cron: '*/10 * * * *'   # Каждые 15 минут
   workflow_dispatch:           # Ручной запуск
 
 jobs:
