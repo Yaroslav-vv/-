@@ -70,7 +70,7 @@ log "🔑 SSH-ключи (ed25519) сгенерированы"
 DISPLAY_NAME="Ampere-$(date '+%Y%m%d-%H%M%S')"
 log "🚀 OCI запрос → создаём '$DISPLAY_NAME' ..."
 
-RESPONSE=$(timeout 90 oci compute instance launch \
+RESPONSE=$(timeout 20 oci compute instance launch \
     --compartment-id       "$OCI_COMPARTMENT_ID" \
     --availability-domain  "$OCI_AVAILABILITY_DOMAIN" \
     --shape                "VM.Standard.A1.Flex" \
